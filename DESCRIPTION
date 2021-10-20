@@ -1,0 +1,31 @@
+Package: bmeta
+Title: Bayesian Meta-Analysis for Event Rates
+Version: 0.1
+Authors@R: c(
+    person(given = "CG", family = "Wang",
+           email = "chenguang.wang.0517@gmail.com",
+           role = c("aut", "cre")),
+    person(given = "Trustees of Columbia University",
+           role = "cph",
+           comment = "tools/make_cpp.R, R/stanmodels.R"))
+Description: This package implements the Bayesian meta-analysis models in Warn
+    et al.(2002) <doi:10.1002/sim.1189>.
+Depends:
+    R (>= 3.4.0),
+    Rcpp (>= 0.12.0),
+    methods
+License: GPL (>= 3)
+LinkingTo: StanHeaders (>= 2.18.0), rstan (>= 2.18.1), BH (>= 1.66.0), Rcpp (>=
+    0.12.0), RcppEigen (>= 0.3.3.3.0), RcppParallel (>= 5.0.1)
+RcppModules: stan_fit4riskdiff_mod, stan_fit4riskratio_mod
+Imports:
+    rstan (>= 2.18.1),
+    RcppParallel (>= 5.0.1),
+    rstantools (>= 2.1.1),
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.2
+Suggests:
+VignetteBuilder: knitr
+SystemRequirements: GNU make
+URL: https://github.com/olssol/bmeta/
