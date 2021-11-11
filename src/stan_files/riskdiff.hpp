@@ -36,7 +36,7 @@ static int current_statement_begin__;
 stan::io::program_reader prog_reader__() {
     stan::io::program_reader reader;
     reader.add_event(0, 0, "start", "model_riskdiff");
-    reader.add_event(44, 42, "end", "model_riskdiff");
+    reader.add_event(41, 39, "end", "model_riskdiff");
     return reader;
 }
 
@@ -237,17 +237,17 @@ public:
         }
 
         current_statement_begin__ = 12;
-        if (!(context__.contains_r("tau")))
-            stan::lang::rethrow_located(std::runtime_error(std::string("Variable tau missing")), current_statement_begin__, prog_reader__());
-        vals_r__ = context__.vals_r("tau");
+        if (!(context__.contains_r("tau2")))
+            stan::lang::rethrow_located(std::runtime_error(std::string("Variable tau2 missing")), current_statement_begin__, prog_reader__());
+        vals_r__ = context__.vals_r("tau2");
         pos__ = 0U;
-        context__.validate_dims("parameter initialization", "tau", "double", context__.to_vec());
-        double tau(0);
-        tau = vals_r__[pos__++];
+        context__.validate_dims("parameter initialization", "tau2", "double", context__.to_vec());
+        double tau2(0);
+        tau2 = vals_r__[pos__++];
         try {
-            writer__.scalar_lub_unconstrain(0, tau_max, tau);
+            writer__.scalar_lub_unconstrain(0, tau_max, tau2);
         } catch (const std::exception& e) {
-            stan::lang::rethrow_located(std::runtime_error(std::string("Error transforming variable tau: ") + e.what()), current_statement_begin__, prog_reader__());
+            stan::lang::rethrow_located(std::runtime_error(std::string("Error transforming variable tau2: ") + e.what()), current_statement_begin__, prog_reader__());
         }
 
         params_r__ = writer__.data_r();
@@ -310,12 +310,12 @@ public:
                 eta = in__.scalar_lub_constrain(-(1), 1);
 
             current_statement_begin__ = 12;
-            local_scalar_t__ tau;
-            (void) tau;  // dummy to suppress unused var warning
+            local_scalar_t__ tau2;
+            (void) tau2;  // dummy to suppress unused var warning
             if (jacobian__)
-                tau = in__.scalar_lub_constrain(0, tau_max, lp__);
+                tau2 = in__.scalar_lub_constrain(0, tau_max, lp__);
             else
-                tau = in__.scalar_lub_constrain(0, tau_max);
+                tau2 = in__.scalar_lub_constrain(0, tau_max);
 
             // transformed parameters
             current_statement_begin__ = 16;
@@ -324,37 +324,29 @@ public:
             stan::math::initialize(pi_t, DUMMY_VAR__);
             stan::math::fill(pi_t, DUMMY_VAR__);
 
-            current_statement_begin__ = 17;
-            local_scalar_t__ tau2;
-            (void) tau2;  // dummy to suppress unused var warning
-            stan::math::initialize(tau2, DUMMY_VAR__);
-            stan::math::fill(tau2, DUMMY_VAR__);
-
             // transformed parameters block statements
             {
-            current_statement_begin__ = 20;
+            current_statement_begin__ = 19;
             local_scalar_t__ pt(DUMMY_VAR__);
             (void) pt;  // dummy to suppress unused var warning
             stan::math::initialize(pt, DUMMY_VAR__);
             stan::math::fill(pt, DUMMY_VAR__);
 
 
-            current_statement_begin__ = 21;
+            current_statement_begin__ = 20;
             for (int i = 1; i <= ns; ++i) {
 
-                current_statement_begin__ = 22;
+                current_statement_begin__ = 21;
                 stan::math::assign(pt, (get_base1(pi_c, i, "pi_c", 1) + get_base1(eta_i, i, "eta_i", 1)));
+                current_statement_begin__ = 22;
+                stan::math::assign(pt, (logical_gt(pt, 1) ? stan::math::promote_scalar<local_scalar_t__>(0.99999999) : stan::math::promote_scalar<local_scalar_t__>(pt) ));
                 current_statement_begin__ = 23;
-                stan::math::assign(pt, (logical_gt(pt, 1) ? stan::math::promote_scalar<local_scalar_t__>(0.99999) : stan::math::promote_scalar<local_scalar_t__>(pt) ));
-                current_statement_begin__ = 24;
                 stan::model::assign(pi_t, 
                             stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
-                            (logical_lt(pt, 0) ? stan::math::promote_scalar<local_scalar_t__>(0.00001) : stan::math::promote_scalar<local_scalar_t__>(pt) ), 
+                            (logical_lt(pt, 0) ? stan::math::promote_scalar<local_scalar_t__>(0.00000001) : stan::math::promote_scalar<local_scalar_t__>(pt) ), 
                             "assigning variable pi_t");
             }
             }
-            current_statement_begin__ = 28;
-            stan::math::assign(tau2, pow(tau, 2));
 
             // validate transformed parameters
             const char* function__ = "validate transformed params";
@@ -375,31 +367,23 @@ public:
                 check_less_or_equal(function__, "pi_t[i_0__]", pi_t[i_0__], 1);
             }
 
-            current_statement_begin__ = 17;
-            if (stan::math::is_uninitialized(tau2)) {
-                std::stringstream msg__;
-                msg__ << "Undefined transformed parameter: tau2";
-                stan::lang::rethrow_located(std::runtime_error(std::string("Error initializing variable tau2: ") + msg__.str()), current_statement_begin__, prog_reader__());
-            }
-            check_greater_or_equal(function__, "tau2", tau2, 0);
-
 
             // model body
 
-            current_statement_begin__ = 32;
+            current_statement_begin__ = 29;
             lp_accum__.add(uniform_log<propto__>(pi_c, 0, 1));
-            current_statement_begin__ = 33;
+            current_statement_begin__ = 30;
             lp_accum__.add(uniform_log<propto__>(eta, -(1), 1));
-            current_statement_begin__ = 34;
+            current_statement_begin__ = 31;
             lp_accum__.add(normal_log<propto__>(eta_i, eta, tau2));
+            current_statement_begin__ = 32;
+            lp_accum__.add(uniform_log<propto__>(tau2, 0, tau_max));
             current_statement_begin__ = 35;
-            lp_accum__.add(uniform_log<propto__>(tau, 0, tau_max));
-            current_statement_begin__ = 38;
             for (int i = 1; i <= ns; ++i) {
 
-                current_statement_begin__ = 39;
+                current_statement_begin__ = 36;
                 lp_accum__.add(binomial_log<propto__>(get_base1(get_base1(n_pla, i, "n_pla", 1), 1, "n_pla", 2), get_base1(get_base1(n_pla, i, "n_pla", 1), 2, "n_pla", 2), get_base1(pi_c, i, "pi_c", 1)));
-                current_statement_begin__ = 40;
+                current_statement_begin__ = 37;
                 lp_accum__.add(binomial_log<propto__>(get_base1(get_base1(n_trt, i, "n_trt", 1), 1, "n_trt", 2), get_base1(get_base1(n_trt, i, "n_trt", 1), 2, "n_trt", 2), get_base1(pi_t, i, "pi_t", 1)));
             }
 
@@ -431,9 +415,8 @@ public:
         names__.push_back("pi_c");
         names__.push_back("eta_i");
         names__.push_back("eta");
-        names__.push_back("tau");
-        names__.push_back("pi_t");
         names__.push_back("tau2");
+        names__.push_back("pi_t");
     }
 
 
@@ -452,8 +435,6 @@ public:
         dimss__.push_back(dims__);
         dims__.resize(0);
         dims__.push_back(ns);
-        dimss__.push_back(dims__);
-        dims__.resize(0);
         dimss__.push_back(dims__);
     }
 
@@ -493,8 +474,8 @@ public:
         double eta = in__.scalar_lub_constrain(-(1), 1);
         vars__.push_back(eta);
 
-        double tau = in__.scalar_lub_constrain(0, tau_max);
-        vars__.push_back(tau);
+        double tau2 = in__.scalar_lub_constrain(0, tau_max);
+        vars__.push_back(tau2);
 
         double lp__ = 0.0;
         (void) lp__;  // dummy to suppress unused var warning
@@ -513,37 +494,29 @@ public:
             stan::math::initialize(pi_t, DUMMY_VAR__);
             stan::math::fill(pi_t, DUMMY_VAR__);
 
-            current_statement_begin__ = 17;
-            double tau2;
-            (void) tau2;  // dummy to suppress unused var warning
-            stan::math::initialize(tau2, DUMMY_VAR__);
-            stan::math::fill(tau2, DUMMY_VAR__);
-
             // do transformed parameters statements
             {
-            current_statement_begin__ = 20;
+            current_statement_begin__ = 19;
             local_scalar_t__ pt(DUMMY_VAR__);
             (void) pt;  // dummy to suppress unused var warning
             stan::math::initialize(pt, DUMMY_VAR__);
             stan::math::fill(pt, DUMMY_VAR__);
 
 
-            current_statement_begin__ = 21;
+            current_statement_begin__ = 20;
             for (int i = 1; i <= ns; ++i) {
 
-                current_statement_begin__ = 22;
+                current_statement_begin__ = 21;
                 stan::math::assign(pt, (get_base1(pi_c, i, "pi_c", 1) + get_base1(eta_i, i, "eta_i", 1)));
+                current_statement_begin__ = 22;
+                stan::math::assign(pt, (logical_gt(pt, 1) ? stan::math::promote_scalar<local_scalar_t__>(0.99999999) : stan::math::promote_scalar<local_scalar_t__>(pt) ));
                 current_statement_begin__ = 23;
-                stan::math::assign(pt, (logical_gt(pt, 1) ? stan::math::promote_scalar<local_scalar_t__>(0.99999) : stan::math::promote_scalar<local_scalar_t__>(pt) ));
-                current_statement_begin__ = 24;
                 stan::model::assign(pi_t, 
                             stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
-                            (logical_lt(pt, 0) ? stan::math::promote_scalar<local_scalar_t__>(0.00001) : stan::math::promote_scalar<local_scalar_t__>(pt) ), 
+                            (logical_lt(pt, 0) ? stan::math::promote_scalar<local_scalar_t__>(0.00000001) : stan::math::promote_scalar<local_scalar_t__>(pt) ), 
                             "assigning variable pi_t");
             }
             }
-            current_statement_begin__ = 28;
-            stan::math::assign(tau2, pow(tau, 2));
 
             if (!include_gqs__ && !include_tparams__) return;
             // validate transformed parameters
@@ -557,16 +530,12 @@ public:
                 check_less_or_equal(function__, "pi_t[i_0__]", pi_t[i_0__], 1);
             }
 
-            current_statement_begin__ = 17;
-            check_greater_or_equal(function__, "tau2", tau2, 0);
-
             // write transformed parameters
             if (include_tparams__) {
                 size_t pi_t_k_0_max__ = ns;
                 for (size_t k_0__ = 0; k_0__ < pi_t_k_0_max__; ++k_0__) {
                     vars__.push_back(pi_t[k_0__]);
                 }
-                vars__.push_back(tau2);
             }
             if (!include_gqs__) return;
         } catch (const std::exception& e) {
@@ -619,7 +588,7 @@ public:
         param_name_stream__ << "eta";
         param_names__.push_back(param_name_stream__.str());
         param_name_stream__.str(std::string());
-        param_name_stream__ << "tau";
+        param_name_stream__ << "tau2";
         param_names__.push_back(param_name_stream__.str());
 
         if (!include_gqs__ && !include_tparams__) return;
@@ -631,9 +600,6 @@ public:
                 param_name_stream__ << "pi_t" << '.' << k_0__ + 1;
                 param_names__.push_back(param_name_stream__.str());
             }
-            param_name_stream__.str(std::string());
-            param_name_stream__ << "tau2";
-            param_names__.push_back(param_name_stream__.str());
         }
 
         if (!include_gqs__) return;
@@ -660,7 +626,7 @@ public:
         param_name_stream__ << "eta";
         param_names__.push_back(param_name_stream__.str());
         param_name_stream__.str(std::string());
-        param_name_stream__ << "tau";
+        param_name_stream__ << "tau2";
         param_names__.push_back(param_name_stream__.str());
 
         if (!include_gqs__ && !include_tparams__) return;
@@ -672,9 +638,6 @@ public:
                 param_name_stream__ << "pi_t" << '.' << k_0__ + 1;
                 param_names__.push_back(param_name_stream__.str());
             }
-            param_name_stream__.str(std::string());
-            param_name_stream__ << "tau2";
-            param_names__.push_back(param_name_stream__.str());
         }
 
         if (!include_gqs__) return;
